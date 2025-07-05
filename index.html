@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>心の王国モデル研究プレゼンテーション</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a1a;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .presentation-container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .slide {
+            width: 90vw;
+            max-width: 1200px;
+            height: 70vh;
+            max-height: 800px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            border-radius: 12px;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            margin: 20px;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="castle" patternUnits="userSpaceOnUse" width="100" height="100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="1.5" fill="rgba(255,255,255,0.08)"/><circle cx="40" cy="70" r="1" fill="rgba(255,255,255,0.06)"/></pattern></defs><rect width="100" height="100" fill="url(%23castle)"/></svg>') repeat;
+            border-radius: 12px;
+            opacity: 0.3;
+        }
+
+        .slide-content {
+            position: relative;
+            z-index: 2;
+            color: white;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .title-slide {
+            text-align: center;
+            background: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%);
+        }
+
+        .title-slide h1 {
+            font-size: 3.5em;
+            margin-bottom: 30px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            line-height: 1.2;
+        }
+
+        .title-slide h2 {
+            font-size: 2em;
+            margin-bottom: 40px;
+            font-weight: 300;
+            opacity: 0.9;
+        }
+
+        .title-slide .author {
+            font-size: 1.3em;
+            margin-top: 60px;
+            opacity: 0.8;
+        }
+
+        .section-slide {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .section-slide h1 {
+            font-size: 3em;
+            text-align: center;
+            margin-bottom: 50px;
+            font-weight: bold;
+        }
+
+        .section-slide .section-number {
+            font-size: 6em;
+            text-align: center;
+            opacity: 0.3;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
+        .content-slide {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .content-slide h1 {
+            font-size: 2.5em;
+            margin-bottom: 40px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .content-slide h2 {
+            font-size: 2em;
+            margin-bottom: 30px;
+            color: #fff;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            padding-bottom: 10px;
+        }
+
+        .content-slide h3 {
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+            color: #f0f8ff;
+        }
+
+        .content-slide ul {
+            list-style: none;
+            margin-left: 20px;
+        }
+
+        .content-slide li {
+            margin: 15px 0;
+            font-size: 1.2em;
+            line-height: 1.5;
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .content-slide li::before {
+            content: '👑';
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-size: 1.2em;
+        }
+
+        .table-slide {
+            background: linear-gradient(135deg, #fc466b 0%, #3f5efb 100%);
+        }
+
+        .research-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .research-table th,
+        .research-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            font-size: 1.1em;
+        }
+
+        .research-table th {
+            background: rgba(255,255,255,0.2);
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .research-table td {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .concept-slide {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .concept-boxes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .concept-box {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .concept-box h3 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .concept-box p {
+            font-size: 1.2em;
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        .future-slide {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .three-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .column {
+            background: rgba(255,255,255,0.1);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .column h3 {
+            font-size: 1.6em;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .conclusion-slide {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            text-align: center;
+        }
+
+        .conclusion-slide h1 {
+            font-size: 3em;
+            margin-bottom: 50px;
+        }
+
+        .value-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 50px;
+        }
+
+        .value-item {
+            background: rgba(255,255,255,0.15);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .value-item h3 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .slide-number {
+            position: absolute;
+            bottom: 20px;
+            right: 30px;
+            font-size: 1.2em;
+            opacity: 0.7;
+            z-index: 3;
+        }
+
+        .highlight {
+            background: rgba(255,255,255,0.2);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #fff;
+            margin: 20px 0;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        .subtitle {
+            font-size: 1.8em;
+            text-align: center;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            font-style: italic;
+        }
+
+        /* ナビゲーションボタンのスタイル */
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 1000;
+        }
+
+        .nav-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+        }
+
+        .nav-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .page-info {
+            background: rgba(255,255,255,0.9);
+            color: #333;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* キーボードヒント */
+        .keyboard-hint {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            z-index: 1000;
+        }
+
+        /* レスポンシブ対応 */
+        @media (max-width: 768px) {
+            .slide {
+                width: 95vw;
+                height: 80vh;
+                padding: 20px;
+            }
+            
+            .title-slide h1 {
+                font-size: 2.5em;
+            }
+            
+            .title-slide h2 {
+                font-size: 1.5em;
+            }
+            
+            .content-slide h1 {
+                font-size: 2em;
+            }
+            
+            .concept-boxes {
+                grid-template-columns: 1fr;
+            }
+            
+            .three-columns {
+                grid-template-columns: 1fr;
+            }
+            
+            .value-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="presentation-container">
+    <!-- キーボードヒント -->
+    <div class="keyboard-hint">
+        キーボード: ← → で移動
+    </div>
+
+    <!-- タイトルスライド -->
+    <div class="slide title-slide active" data-slide="1">
+        <div class="slide-content">
+            <h1>心の王国モデル</h1>
+            <h2>統一場心理学と複数の自分理論の統合による<br>新しい心理統合アプローチ</h2>
+            <div class="author">研究発表<br>2025年</div>
+        </div>
+        <div class="slide-number">1</div>
+    </div>
+
+    <!-- 研究概要スライド -->
+    <div class="slide content-slide" data-slide="2">
+        <div class="slide-content">
+            <h1>研究の全体構成</h1>
+            <ul>
+                <li><strong>第一部：</strong>統一場心理学とは何か？（心の分断が悩みの原因）</li>
+                <li><strong>第二部：</strong>複数の自分モデルの過去研究調査</li>
+                <li><strong>第三部：</strong>心の王国モデルの提案（統合理論の構築）</li>
+                <li><strong>第四部：</strong>今後の展開可能性</li>
+            </ul>
+            <div class="highlight">
+                本研究は、吉家重夫氏の統一場心理学を基盤として、「複数の自分」理論を「心の王国」メタファーで統合する革新的アプローチを提案する
+            </div>
+        </div>
+        <div class="slide-number">2</div>
+    </div>
+
+    <!-- 第一部セクションスライド -->
+    <div class="slide section-slide" data-slide="3">
+        <div class="slide-content">
+            <div class="section-number">第一部</div>
+            <h1>統一場心理学とは何か？</h1>
+            <div class="subtitle">～心の分断が、悩みや不安定なこころの原因～</div>
+        </div>
+        <div class="slide-number">3</div>
+    </div>
+
+    <!-- 統一場心理学の基本原理 -->
+    <div class="slide content-slide" data-slide="4">
+        <div class="slide-content">
+            <h1>統一場心理学の基本原理</h1>
+            <h2>1.1 根本原理</h2>
+            <ul>
+                <li><strong>心の分断 → 苦悩</strong>：心の部分同士の対立・排除が問題の根源</li>
+                <li><strong>統合 → 平安</strong>：心の全体性回復が解決の鍵</li>
+                <li>吉家重夫氏による30年間の研究成果</li>
+            </ul>
+            <h2>1.2 意識の5次元構造</h2>
+            <ul>
+                <li>時間軸：論理・因果関係</li>
+                <li>空間軸：勢力範囲・影響力</li>
+                <li>質感軸：知識・情報・理解</li>
+                <li>情感軸：感情・意味・エネルギー</li>
+                <li>統一場：全体を包含する意識の場</li>
+            </ul>
+        </div>
+        <div class="slide-number">4</div>
+    </div>
+
+    <!-- 心の問題の統一的理解 -->
+    <div class="slide content-slide" data-slide="5">
+        <div class="slide-content">
+            <h1>心の問題の統一的理解</h1>
+            <h2>1.3 共通構造の発見</h2>
+            <div class="concept-boxes">
+                <div class="concept-box">
+                    <h3>🎭 あがり症</h3>
+                    <p>「立派な私」と「普段の私」の分断<br>人前で本来の力を発揮できない</p>
+                </div>
+                <div class="concept-box">
+                    <h3>😔 うつ病</h3>
+                    <p>「理想の私」と「現実の私」の分断<br>自己否定による意欲低下</p>
+                </div>
+                <div class="concept-box">
+                    <h3>🤔 決断困難</h3>
+                    <p>「複数の私」の間での葛藤<br>統合されない意思決定</p>
+                </div>
+                <div class="concept-box">
+                    <h3>💊 統合による解決</h3>
+                    <p>分断された部分を「ありのまま」受け入れ<br>全体として調和させる</p>
+                </div>
+            </div>
+        </div>
+        <div class="slide-number">5</div>
+    </div>
+
+    <!-- 第二部セクションスライド -->
+    <div class="slide section-slide" data-slide="6">
+        <div class="slide-content">
+            <div class="section-number">第二部</div>
+            <h1>複数の自分モデルの<br>過去研究調査</h1>
+            <div class="subtitle">～心理学における分人論的アプローチの系譜～</div>
+        </div>
+        <div class="slide-number">6</div>
+    </div>
+
+    <!-- 理論比較表 -->
+    <div class="slide table-slide" data-slide="7">
+        <div class="slide-content">
+            <h1>主要理論の比較分析</h1>
+            <table class="research-table">
+                <thead>
+                    <tr>
+                        <th>理論名</th>
+                        <th>提唱者</th>
+                        <th>核心概念</th>
+                        <th>統合メカニズム</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>内的家族システム(IFS)</td>
+                        <td>R.シュワルツ</td>
+                        <td>Parts & Self</td>
+                        <td>Self-leadership</td>
+                    </tr>
+                    <tr>
+                        <td>分人論</td>
+                        <td>平野啓一郎</td>
+                        <td>分人の集合体</td>
+                        <td>全体としての自分</td>
+                    </tr>
+                    <tr>
+                        <td>対話的自己理論</td>
+                        <td>H.ハーマンズ</td>
+                        <td>I-positions</td>
+                        <td>多声的対話</td>
+                    </tr>
+                    <tr>
+                        <td>エゴ・ステート療法</td>
+                        <td>ワトキンス夫妻</td>
+                        <td>Ego states</td>
+                        <td>内的対話</td>
+                    </tr>
+                    <tr>
+                        <td>こころのパート理論</td>
+                        <td>原田幸治</td>
+                        <td>心のパーツ</td>
+                        <td>パーツ統合</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="slide-number">7</div>
+    </div>
+
+    <!-- 既存理論の限界と課題 -->
+    <div class="slide content-slide" data-slide="8">
+        <div class="slide-content">
+            <h1>既存理論の共通点と限界</h1>
+            <h2>2.2 共通点</h2>
+            <ul>
+                <li>心の多重構造の認識</li>
+                <li>内的対話の重要性</li>
+                <li>統合による問題解決指向</li>
+            </ul>
+            <h2>2.3 限界点</h2>
+            <ul>
+                <li>理論間の統合的理解の不足</li>
+                <li>実践的応用の複雑さ</li>
+                <li>一般の人にとってのアクセシビリティの問題</li>
+                <li>心の物理的な構造原理との接続不足</li>
+            </ul>
+            <div class="highlight">
+                統一場心理学の物理的基盤と組み合わせることで、これらの限界を克服する可能性
+            </div>
+        </div>
+        <div class="slide-number">8</div>
+    </div>
+
+    <!-- 第三部セクションスライド -->
+    <div class="slide section-slide" data-slide="9">
+        <div class="slide-content">
+            <div class="section-number">第三部</div>
+            <h1>心の王国モデルの提案</h1>
+            <div class="subtitle">～統一場心理学による複数の自分理論の革新的統合～</div>
+        </div>
+        <div class="slide-number">9</div>
+    </div>
+
+    <!-- 心の王国モデル基本構造 -->
+    <div class="slide concept-slide" data-slide="10">
+        <div class="slide-content">
+            <h1>心の王国モデルの基本構造</h1>
+            <div class="highlight">
+                <strong>核心アイデア：</strong><br>
+                統合されたこころとして、自分の心の中のたくさんの分人をありのままに認め、心の王国（自分の心の中のたくさんの分人からなる社会、国）の王様として見立てる
+            </div>
+            <div class="concept-boxes">
+                <div class="concept-box">
+                    <span class="icon">👑</span>
+                    <h3>王様（統合意識）</h3>
+                    <p>統一場としての自己<br>メタ的自己<br>能動的な統治者</p>
+                </div>
+                <div class="concept-box">
+                    <span class="icon">👥</span>
+                    <h3>国民（分人）</h3>
+                    <p>様々な心の部分<br>サブパーソナリティ<br>それぞれの役割と願い</p>
+                </div>
+                <div class="concept-box">
+                    <span class="icon">🏰</span>
+                    <h3>王国（心の全体性）</h3>
+                    <p>統一場における調和的全体<br>多様性と統合の場<br>発展と成長の舞台</p>
+                </div>
+            </div>
+        </div>
+        <div class="slide-number">10</div>
+    </div>
+
+    <!-- 王国統治の原理 -->
+    <div class="slide content-slide" data-slide="11">
+        <div class="slide-content">
+            <h1>王国統治の原理</h1>
+            <h2>3.2 王様の役割</h2>
+            <ul>
+                <li><strong>国民の声を聞く：</strong>各分人の願いや要求を受容的に理解する</li>
+                <li><strong>多様性の尊重：</strong>すべての分人を王国の一員として認める</li>
+                <li><strong>調和的マネジメント：</strong>国全体の発展のための協力体制構築</li>
+                <li><strong>能動的統治：</strong>「今、ここで」の能動観による王国運営</li>
+            </ul>
+            <div class="highlight">
+                この王様は、国民一人一人の願いややりたいことを尊重するとともに、この国（自分）の発展のために、国民みんなが協力して活動することをマネジメントしている
+            </div>
+        </div>
+        <div class="slide-number">11</div>
+    </div>
+
+    <!-- 従来理論との差別化 -->
+    <div class="slide content-slide" data-slide="12">
+        <div class="slide-content">
+            <h1>従来理論との差別化ポイント</h1>
+            <h2>3.3 革新性</h2>
+            <div class="three-columns">
+                <div class="column">
+                    <h3>🔬 理論的整合性</h3>
+                    <ul>
+                        <li>統一場心理学との完全な整合</li>
+                        <li>心の物理的構造原理との接続</li>
+                        <li>5次元意識構造の王国的表現</li>
+                    </ul>
+                </div>
+                <div class="column">
+                    <h3>🎯 実践的分かりやすさ</h3>
+                    <ul>
+                        <li>親しみやすい王国メタファー</li>
+                        <li>複雑な心理構造の可視化</li>
+                        <li>日常的な自己管理への応用</li>
+                    </ul>
+                </div>
+                <div class="column">
+                    <h3>💪 エンパワーメント志向</h3>
+                    <ul>
+                        <li>「王様」としての主体性強化</li>
+                        <li>「内戦」から「統治」への転換</li>
+                        <li>多様性を活かした自己実現</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="slide-number">12</div>
+    </div>
+
+    <!-- 実践的応用方法 -->
+    <div class="slide content-slide" data-slide="13">
+        <div class="slide-content">
+            <h1>実践的応用方法</h1>
+            <h2>3.4 具体的ワーク</h2>
+            <ul>
+                <li><strong>心の王国マッピング・ワーク：</strong>
+                    <br>自分の中の「国民」（分人）の発見と命名、各国民の役割・願い・特性の理解</li>
+                <li><strong>王国会議ワーク：</strong>
+                    <br>内的対話による国民の声の聴取、葛藤状況での調停と合意形成</li>
+                <li><strong>王国発展計画ワーク：</strong>
+                    <br>個人の成長を王国の繁栄として設計、多様性を活かした統合的自己実現</li>
+            </ul>
+            <div class="highlight">
+                自分の心の中にたくさん存在する分人が持つ多様性を最大限に発揮した自分を発揮することができる
+            </div>
+        </div>
+        <div class="slide-number">13</div>
+    </div>
+
+    <!-- 第四部セクションスライド -->
+    <div class="slide section-slide" data-slide="14">
+        <div class="slide-content">
+            <div class="section-number">第四部</div>
+            <h1>今後の展開可能性</h1>
+            <div class="subtitle">～学術的・実践的発展への道筋～</div>
+        </div>
+        <div class="slide-number">14</div>
+    </div>
+
+    <!-- 今後の展開 -->
+    <div class="slide future-slide" data-slide="15">
+        <div class="slide-content">
+            <h1>今後の展開可能性</h1>
+            <div class="three-columns">
+                <div class="column">
+                    <h3>📊 実証研究</h3>
+                    <ul>
+                        <li>ワークショップ効果測定</li>
+                        <li>事例研究による検証</li>
+                        <li>既存理論との比較研究</li>
+                        <li>長期的効果の追跡</li>
+                    </ul>
+                </div>
+                <div class="column">
+                    <h3>🎓 教育・臨床応用</h3>
+                    <ul>
+                        <li>セルフマネジメント教育</li>
+                        <li>心理カウンセリング技法</li>
+                        <li>組織開発・チームビルディング</li>
+                        <li>リーダーシップ育成</li>
+                    </ul>
+                </div>
+                <div class="column">
+                    <h3>🔬 理論的発展</h3>
+                    <ul>
+                        <li>統一場心理学の拡張</li>
+                        <li>発達心理学との接続</li>
+                        <li>社会心理学への展開</li>
+                        <li>意識哲学としての深化</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="slide-number">15</div>
+    </div>
+
+    <!-- 研究の価値 -->
+    <div class="slide conclusion-slide" data-slide="16">
+        <div class="slide-content">
+            <h1>研究の学術的・実践的価値</h1>
+            <div class="value-grid">
+                <div class="value-item">
+                    <span class="icon">🎓</span>
+                    <h3>学術的価値</h3>
+                    <ul>
+                        <li>理論統合の新規性</li>
+                        <li>メタファーの効果性</li>
+                        <li>学際的貢献</li>
+                        <li>意識研究の推進</li>
+                    </ul>
+                </div>
+                <div class="value-item">
+                    <span class="icon">🌟</span>
+                    <h3>実践的価値</h3>
+                    <ul>
+                        <li>アクセシビリティ</li>
+                        <li>汎用性</li>
+                        <li>持続可能性</li>
+                        <li>エンパワーメント効果</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="slide-number">16</div>
+    </div>
+
+    <!-- 最終スライド -->
+    <div class="slide title-slide" data-slide="17">
+        <div class="slide-content">
+            <h1>ありがとうございました</h1>
+            <h2>心の王国モデル<br>～新しい自己統合への道筋～</h2>
+            <div class="highlight" style="margin-top: 60px; font-size: 1.4em;">
+                統一場心理学と複数の自分理論の統合により、<br>
+                より豊かで調和のとれた心の在り方を目指して
+            </div>
+        </div>
+        <div class="slide-number">17</div>
+    </div>
+
+    <!-- ナビゲーションボタン -->
+    <div class="navigation">
+        <button class="nav-button" id="prevBtn" onclick="changeSlide(-1)">
+            ⬅️ 前のページ
+        </button>
+        <div class="page-info">
+            <span id="currentSlide">1</span> / <span id="totalSlides">17</span>
+        </div>
+        <button class="nav-button" id="nextBtn" onclick="changeSlide(1)">
+            次のページ ➡️
+        </button>
+    </div>
+</div>
+
+<script>
+let currentSlideIndex = 1;
+const totalSlides = 17;
+
+function showSlide(index) {
+    // 全てのスライドを非表示
+    const slides = document.querySelectorAll('.slide');
+    slides.forEach(slide => slide.classList.remove('active'));
+    
+    // 指定されたスライドを表示
+    const targetSlide = document.querySelector(`[data-slide="${index}"]`);
+    if (targetSlide) {
+        targetSlide.classList.add('active');
+    }
+    
+    // ページ情報を更新
+    document.getElementById('currentSlide').textContent = index;
+    
+    // ボタンの状態を更新
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    
+    prevBtn.disabled = index <= 1;
+    nextBtn.disabled = index >= totalSlides;
+}
+
+function changeSlide(direction) {
+    const newIndex = currentSlideIndex + direction;
+    
+    if (newIndex >= 1 && newIndex <= totalSlides) {
+        currentSlideIndex = newIndex;
+        showSlide(currentSlideIndex);
+    }
+}
+
+// キーボードでの操作
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'ArrowRight' || event.key === ' ') {
+        changeSlide(1);
+        event.preventDefault();
+    } else if (event.key === 'ArrowLeft') {
+        changeSlide(-1);
+        event.preventDefault();
+    } else if (event.key === 'Home') {
+        currentSlideIndex = 1;
+        showSlide(currentSlideIndex);
+        event.preventDefault();
+    } else if (event.key === 'End') {
+        currentSlideIndex = totalSlides;
+        showSlide(currentSlideIndex);
+        event.preventDefault();
+    }
+});
+
+// 初期化
+document.addEventListener('DOMContentLoaded', function() {
+    showSlide(1);
+    document.getElementById('totalSlides').textContent = totalSlides;
+});
+
+// マウスホイールでの操作（オプション）
+document.addEventListener('wheel', function(event) {
+    if (Math.abs(event.deltaY) > 10) { // 小さな動きは無視
+        if (event.deltaY > 0) {
+            changeSlide(1); // 下にスクロール = 次のスライド
+        } else {
+            changeSlide(-1); // 上にスクロール = 前のスライド
+        }
+        event.preventDefault();
+    }
+}, { passive: false });
+</script>
+
+</body>
+</html>
